@@ -33,6 +33,7 @@ const addRowBtn = document.getElementById("addRowBtn");
 const recomputeBtn = document.getElementById("recomputeBtn");
 const downloadCsvBtn = document.getElementById("downloadCsvBtn");
 const csvInput = document.getElementById("csvInput");
+const minApplicationsInput = document.getElementById("minApplicationsInput");
 const inputTableBody = document.getElementById("inputTableBody");
 const summaryGrid = document.getElementById("summaryGrid");
 const leaderboardBody = document.getElementById("leaderboardBody");
@@ -41,6 +42,7 @@ const contributionBars = document.getElementById("contributionBars");
 
 let currentRows = loadStoredRows();
 let lastRankings = [];
+let minApplications = loadMinApplications();
 
 init();
 
@@ -63,6 +65,12 @@ function init() {
   recomputeBtn.addEventListener("click", recompute);
   downloadCsvBtn.addEventListener("click", downloadCsv);
   csvInput.addEventListener("change", onCsvUpload);
+  minApplicationsInput.value = String(minApplications);
+  minApplicationsInput.addEventListener("input", () => {
+    minApplications = toNumber(minApplicationsInput.value);
+    localStorage.setItem(`${STORAGE_KEY}-min-applications`, String(minApplications));
+    recompute();
+  });
 
   renderInputTable();
   recompute();
@@ -103,6 +111,12 @@ function sanitizeRows(rows) {
 
 function saveRows() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(currentRows));
+}
+
+function loadMinApplications() {
+  const saved = localStorage.getItem(`${STORAGE_KEY}-min-applications`);
+  const value = toNumber(saved);
+  return value || 20000;
 }
 
 function toNumber(value) {
@@ -162,20 +176,26 @@ function recompute() {
   const rows = sanitizeRows(currentRows);
   currentRows = rows;
   saveRows();
-  lastRankings = buildRankings(rows);
+  lastRankings = buildRankings(rows, minApplications);
   renderSummary(lastRankings);
   renderLeaderboard(lastRankings);
   renderTopCards(lastRankings.slice(0, 3));
   renderContributionBars(lastRankings);
+  datasetInfo.textContent = `${lastRankings.length} ranked · min ${minApplications.toLocaleString()} apps`;
 }
 
-function buildRankings(rows) {
-  const withinRate = objectFromRows(rows, (row) => ratio(row.completed_within_rts, row.total_completed));
-  const completionRate = objectFromRows(rows, (row) => ratio(row.total_completed, row.total_received));
-  const appealBurden = objectFromRows(rows, (row) => ratio(row.total_appeals, row.total_completed));
-  const appealClosure = objectFromRows(rows, (row) => ratio(row.final_appeals, row.total_appeals), true);
-  const feedbackRaw = objectFromRows(rows, (row) => (row.feedback_avg_rating > 0 ? (row.feedback_avg_rating / 5) * 100 : null), true);
-  const aasCoverage = objectFromRows(rows, (row) => {
+function buildRankings(rows, threshold) {
+  const eligibleRows = rows.filter((row) => row.total_received >= threshold);
+  if (!eligibleRows.length) {
+    return [];
+  }
+
+  const withinRate = objectFromRows(eligibleRows, (row) => ratio(row.completed_within_rts, row.total_completed));
+  const completionRate = objectFromRows(eligibleRows, (row) => ratio(row.total_completed, row.total_received));
+  const appealBurden = objectFromRows(eligibleRows, (row) => ratio(row.total_appeals, row.total_completed));
+  const appealClosure = objectFromRows(eligibleRows, (row) => ratio(row.final_appeals, row.total_appeals), true);
+  const feedbackRaw = objectFromRows(eligibleRows, (row) => (row.feedback_avg_rating > 0 ? (row.feedback_avg_rating / 5) * 100 : null), true);
+  const aasCoverage = objectFromRows(eligibleRows, (row) => {
     const denominator = row.services_on_aas + row.services_not_on_aas;
     if (denominator > 0) {
       return row.services_on_aas / denominator;
@@ -197,7 +217,7 @@ function buildRankings(rows) {
     ? feedbackValues.reduce((sum, value) => sum + value, 0) / feedbackValues.length
     : 50;
 
-  const draft = rows.map((row) => {
+  const draft = eligibleRows.map((row) => {
     const deliveryScore = 0.7 * withinScores[row.department] + 0.3 * completionScores[row.department];
     const feedbackScore = shrinkFeedback(feedbackRaw[row.department], row.feedback_count, globalFeedbackAverage);
 
@@ -295,6 +315,13 @@ function ratio(numerator, denominator) {
 
 function renderSummary(rankings) {
   const cards = summaryGrid.querySelectorAll(".stat-card");
+  if (!rankings.length) {
+    cards[0].querySelector(".stat-value").textContent = "0";
+    cards[1].querySelector(".stat-value").textContent = "None";
+    cards[2].querySelector(".stat-value").textContent = "0.00";
+    cards[3].querySelector(".stat-value").textContent = "None";
+    return;
+  }
   const averageScore = rankings.reduce((sum, row) => sum + row.final_score, 0) / Math.max(rankings.length, 1);
   const bestDelivery = [...rankings].sort((a, b) => b.delivery_score - a.delivery_score)[0];
 
@@ -306,6 +333,12 @@ function renderSummary(rankings) {
 
 function renderLeaderboard(rankings) {
   leaderboardBody.innerHTML = "";
+  if (!rankings.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="8" class="empty-state">No departments meet the minimum applications filter.</td>`;
+    leaderboardBody.appendChild(tr);
+    return;
+  }
 
   rankings.forEach((row) => {
     const tr = document.createElement("tr");
@@ -325,6 +358,10 @@ function renderLeaderboard(rankings) {
 
 function renderTopCards(rows) {
   topCards.innerHTML = "";
+  if (!rows.length) {
+    topCards.innerHTML = '<p class="empty-inline">No ranked departments.</p>';
+    return;
+  }
   rows.forEach((row) => {
     const card = document.createElement("article");
     card.className = "mini-card";
@@ -340,6 +377,10 @@ function renderTopCards(rows) {
 
 function renderContributionBars(rankings) {
   contributionBars.innerHTML = "";
+  if (!rankings.length) {
+    contributionBars.innerHTML = '<p class="empty-inline">No ranked departments.</p>';
+    return;
+  }
   const metrics = [
     {
       label: "Delivery score",
