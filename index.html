@@ -38,8 +38,11 @@
 
           <aside class="hero-card hero-rank-card">
             <p class="eyebrow">Ranking</p>
-            <p class="rank-note">More on-time completion, fewer appeals, better feedback, higher AAS coverage.</p>
-            <p class="rank-note">`Min Apps` removes low-volume departments from ranking.</p>
+            <p class="rank-note">Final = 0.50 × Delivery + 0.20 × Appeal + 0.15 × Feedback + 0.15 × AAS</p>
+            <p class="rank-note">Delivery = 0.7 × (Completed Within RTS / Total Completed) + 0.3 × (Total Completed / Total Received)</p>
+            <p class="rank-note">Appeal = 0.6 × low appeal burden + 0.4 × (Final Appeals / Total Appeals)</p>
+            <p class="rank-note">Feedback = Feedback Avg / 5 · AAS = On AAS / (On AAS + Not On AAS)</p>
+            <p class="rank-note">Only departments with Total Received ≥ Min Apps are ranked.</p>
           </aside>
         </div>
       </section>
