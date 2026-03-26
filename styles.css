@@ -165,11 +165,6 @@ h2 {
   gap: 1.25rem;
 }
 
-.control-panel {
-  display: grid;
-  gap: 1rem;
-}
-
 .panel-card,
 .dashboard-card {
   border-radius: 1.4rem;
@@ -185,6 +180,36 @@ h2 {
   display: grid;
   gap: 0.6rem;
   margin-top: 0.8rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.toolbar-filter {
+  margin-left: auto;
+}
+
+.toolbar-note {
+  margin: 0;
+  width: 100%;
+}
+
+.filter-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .primary-btn,
@@ -434,13 +459,12 @@ th {
 }
 
 .filter-input {
-  width: 100%;
+  width: 8rem;
   border: 1px solid rgba(16, 50, 74, 0.16);
   border-radius: 0.9rem;
-  padding: 0.75rem 0.85rem;
+  padding: 0.72rem 0.8rem;
   background: rgba(255, 255, 255, 0.88);
   color: var(--ink);
-  margin-top: 0.45rem;
 }
 
 .cell-input.text-input {
@@ -480,11 +504,6 @@ th {
     align-items: end;
   }
 
-  .workspace {
-    grid-template-columns: 21rem 1fr;
-    align-items: start;
-  }
-
   .summary-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -497,6 +516,22 @@ th {
 @media (max-width: 879px) {
   .app-shell {
     padding-inline: 1rem;
+  }
+
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .toolbar-filter {
+    margin-left: 0;
+  }
+
+  .toolbar-group {
+    width: 100%;
+  }
+
+  .filter-input {
+    width: 100%;
   }
 
   .bar-row {

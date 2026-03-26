@@ -37,10 +37,9 @@
       </section>
 
       <section class="workspace">
-        <aside class="control-panel">
-          <div class="panel-card">
-            <h2>Actions</h2>
-            <div class="button-stack">
+        <section class="dashboard">
+          <div class="toolbar panel-card">
+            <div class="toolbar-group">
               <button class="primary-btn" id="resetSeedBtn" type="button">Reset</button>
               <button class="secondary-btn" id="addRowBtn" type="button">Add Row</button>
               <button class="secondary-btn" id="downloadCsvBtn" type="button">Export</button>
@@ -49,23 +48,13 @@
                 <input id="csvInput" type="file" accept=".csv,text/csv" />
               </label>
             </div>
-            <p class="mini-note" id="datasetInfo">68 rows loaded.</p>
-          </div>
-
-          <div class="panel-card">
-            <h2>Min Apps</h2>
-            <input id="minApplicationsInput" class="filter-input" type="number" min="0" step="1000" value="20000" />
-          </div>
-
-          <div class="panel-card">
-            <h2>CSV</h2>
-            <div class="code-block">
-              department,total_received,total_completed,completed_within_rts,total_appeals,final_appeals,feedback_avg_rating,feedback_count,total_notified_services,services_on_aas,services_not_on_aas
+            <div class="toolbar-group toolbar-filter">
+              <label class="filter-label" for="minApplicationsInput">Min Apps</label>
+              <input id="minApplicationsInput" class="filter-input" type="number" min="0" step="1000" value="20000" />
             </div>
+            <p class="mini-note toolbar-note" id="datasetInfo">68 rows loaded.</p>
           </div>
-        </aside>
 
-        <section class="dashboard">
           <div class="summary-grid" id="summaryGrid">
             <article class="stat-card">
               <span class="stat-label">Departments</span>
