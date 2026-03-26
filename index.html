@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RTS Department Ranking Tool</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#10324a" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true">
+      <div class="beam beam-a"></div>
+      <div class="beam beam-b"></div>
+      <div class="grid"></div>
+    </div>
+
+    <main class="app-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">RTS Ranking</p>
+          <h1>Live department ranking</h1>
+          <p class="subhead">Edit values. Rankings update instantly.</p>
+        </div>
+
+        <aside class="hero-card">
+          <div class="status-row">
+            <span class="status-dot is-live"></span>
+            <span>Browser only</span>
+          </div>
+          <div class="formula-block">
+            <strong>Score</strong>
+            <span>50% Delivery · 20% Appeal · 15% Feedback · 15% AAS</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="workspace">
+        <aside class="control-panel">
+          <div class="panel-card">
+            <h2>Actions</h2>
+            <div class="button-stack">
+              <button class="primary-btn" id="resetSeedBtn" type="button">Reset</button>
+              <button class="secondary-btn" id="addRowBtn" type="button">Add Row</button>
+              <button class="secondary-btn" id="downloadCsvBtn" type="button">Export</button>
+              <label class="upload-btn">
+                Import
+                <input id="csvInput" type="file" accept=".csv,text/csv" />
+              </label>
+            </div>
+            <p class="mini-note" id="datasetInfo">68 rows loaded.</p>
+          </div>
+
+          <div class="panel-card">
+            <h2>CSV</h2>
+            <div class="code-block">
+              department,total_received,total_completed,completed_within_rts,total_appeals,final_appeals,feedback_avg_rating,feedback_count,total_notified_services,services_on_aas,services_not_on_aas
+            </div>
+          </div>
+        </aside>
+
+        <section class="dashboard">
+          <div class="summary-grid" id="summaryGrid">
+            <article class="stat-card">
+              <span class="stat-label">Departments</span>
+              <strong class="stat-value">0</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Top Performer</span>
+              <strong class="stat-value">Not available</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Average Score</span>
+              <strong class="stat-value">0.00</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Highest Delivery</span>
+              <strong class="stat-value">Not available</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="section-head">
+              <div>
+                <p class="section-kicker">Inputs</p>
+                <h2>Editable data</h2>
+              </div>
+              <button class="secondary-btn" id="recomputeBtn" type="button">Recompute</button>
+            </div>
+            <div class="table-wrap data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Total Received</th>
+                    <th>Total Completed</th>
+                    <th>Completed Within RTS</th>
+                    <th>Total Appeals</th>
+                    <th>Final Appeals</th>
+                    <th>Feedback Avg</th>
+                    <th>Feedback Count</th>
+                    <th>Total Notified</th>
+                    <th>On AAS</th>
+                    <th>Not On AAS</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="inputTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="section-head">
+              <div>
+                <p class="section-kicker">Ranking</p>
+                <h2>Leaderboard</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Department</th>
+                    <th>Final Score</th>
+                    <th>Delivery</th>
+                    <th>Appeal</th>
+                    <th>Feedback</th>
+                    <th>AAS</th>
+                    <th>Confidence</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <article class="dashboard-card">
+              <div class="section-head">
+                <div>
+                  <p class="section-kicker">Top</p>
+                  <h2>Best departments</h2>
+                </div>
+              </div>
+              <div class="cards-list" id="topCards"></div>
+            </article>
+
+            <article class="dashboard-card">
+              <div class="section-head">
+                <div>
+                  <p class="section-kicker">Mix</p>
+                  <h2>Average scores</h2>
+                </div>
+              </div>
+              <div class="bars" id="contributionBars"></div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="seedData.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
