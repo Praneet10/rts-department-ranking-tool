@@ -3,8 +3,8 @@
   "short_name": "RTS Assessor",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#eef5f4",
-  "theme_color": "#10324a",
+  "background_color": "#f4ede3",
+  "theme_color": "#244a63",
   "icons": [
     {
       "src": "icons/icon.svg",

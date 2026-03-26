@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>RTS Department Ranking Tool</title>
     <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#10324a" />
+    <meta name="theme-color" content="#244a63" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -24,16 +24,24 @@
           <p class="subhead">Edit values. Rankings update instantly.</p>
         </div>
 
-        <aside class="hero-card">
-          <div class="status-row">
-            <span class="status-dot is-live"></span>
-            <span>Browser only</span>
-          </div>
-          <div class="formula-block">
-            <strong>Score</strong>
-            <span>50% Delivery · 20% Appeal · 15% Feedback · 15% AAS</span>
-          </div>
-        </aside>
+        <div class="hero-side">
+          <aside class="hero-card">
+            <div class="status-row">
+              <span class="status-dot is-live"></span>
+              <span>Browser only</span>
+            </div>
+            <div class="formula-block">
+              <strong>Score</strong>
+              <span>50% Delivery · 20% Appeal · 15% Feedback · 15% AAS</span>
+            </div>
+          </aside>
+
+          <aside class="hero-card hero-rank-card">
+            <p class="eyebrow">Ranking</p>
+            <p class="rank-note">More on-time completion, fewer appeals, better feedback, higher AAS coverage.</p>
+            <p class="rank-note">`Min Apps` removes low-volume departments from ranking.</p>
+          </aside>
+        </div>
       </section>
 
       <section class="workspace">
