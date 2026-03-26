@@ -47,6 +47,8 @@ let minApplications = loadMinApplications();
 init();
 
 function init() {
+  disableServiceWorkers();
+
   resetSeedBtn.addEventListener("click", () => {
     currentRows = cloneRows(window.RTS_SEED_DATA || []);
     saveRows();
@@ -75,6 +77,26 @@ function init() {
   renderInputTable();
   recompute();
   datasetInfo.textContent = `${currentRows.length} rows ready.`;
+}
+
+function disableServiceWorkers() {
+  if (!("serviceWorker" in navigator)) {
+    return;
+  }
+
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => registration.unregister());
+  });
+
+  if ("caches" in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => {
+        if (key.includes("rts-assessor-cache")) {
+          caches.delete(key);
+        }
+      });
+    });
+  }
 }
 
 function loadStoredRows() {
@@ -181,7 +203,8 @@ function recompute() {
   renderLeaderboard(lastRankings);
   renderTopCards(lastRankings.slice(0, 3));
   renderContributionBars(lastRankings);
-  datasetInfo.textContent = `${lastRankings.length} ranked · min ${minApplications.toLocaleString()} apps`;
+  const eligible = rows.filter((row) => row.total_received >= minApplications).length;
+  datasetInfo.textContent = `${eligible}/${rows.length} ranked · min ${minApplications.toLocaleString()} apps`;
 }
 
 function buildRankings(rows, threshold) {
